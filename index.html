@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Back to the Cushion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            color: #2d3748;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1em;
+            font-style: italic;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            font-weight: 400;
+        }
+
+        .message-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 1.2em;
+            line-height: 1.8;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 10px 10px 10px 0;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .button.secondary {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #4a5568;
+            box-shadow: 0 4px 15px rgba(168, 237, 234, 0.3);
+        }
+
+        .button.gentle {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #4a5568;
+            box-shadow: 0 4px 15px rgba(252, 182, 159, 0.3);
+        }
+
+        .timer-display {
+            font-size: 3em;
+            font-weight: 300;
+            text-align: center;
+            color: #2d3748;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .breathing-guide {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        .breath-circle {
+            width: 100px;
+            height: 100px;
+            border: 3px solid #4a5568;
+            border-radius: 50%;
+            margin: 20px auto;
+            transition: transform 4s ease-in-out;
+        }
+
+        .breath-circle.inhale {
+            transform: scale(1.5);
+        }
+
+        .breath-circle.exhale {
+            transform: scale(1);
+        }
+
+        .breath-text {
+            font-size: 1.5em;
+            color: #4a5568;
+            margin: 20px 0;
+            font-weight: 300;
+        }
+
+        .practice-log {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+        }
+
+        .encouragement-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            max-width: 400px;
+            text-align: center;
+            display: none;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            margin: 5px;
+            width: 100px;
+        }
+
+        .anxiety-tools {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        @keyframes gentle-pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .gentle-reminder {
+            animation: gentle-pulse 3s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧘 Back to the Cushion</h1>
+            <p>Gentle support for your Buddhist practice journey</p>
+        </div>
+
+        <div class="card">
+            <h2>💝 Daily Encouragement</h2>
+            <div id="encouragementMessage" class="message-display gentle-reminder">
+                Click below to receive a gentle message of support
+            </div>
+            <button class="button" onclick="showEncouragement()">Get Daily Message</button>
+            <button class="button secondary" onclick="showAnxietySupport()">Anxiety Support</button>
+            <button class="button gentle" onclick="showRegretHealing()">Regret & Forgiveness</button>
+        </div>
+
+        <div class="card">
+            <h2>⏰ Gentle Meditation Timer</h2>
+            <div class="timer-display" id="timerDisplay">05:00</div>
+            <div class="timer-controls">
+                <input type="number" id="minutes" value="5" min="1" max="60">
+                <label>minutes</label>
+                <br><br>
+                <button class="button" onclick="startTimer()">Start Practice</button>
+                <button class="button secondary" onclick="pauseTimer()">Pause</button>
+                <button class="button gentle" onclick="resetTimer()">Reset</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🌸 Breathing Companion</h2>
+            <div class="breathing-guide">
+                <div id="breathCircle" class="breath-circle"></div>
+                <div id="breathText" class="breath-text">Click to begin breathing practice</div>
+                <button class="button" onclick="startBreathing()">Start Breathing</button>
+                <button class="button secondary" onclick="stopBreathing()">Stop</button>
+            </div>
+        </div>
+
+        <div class="card anxiety-tools">
+            <h2>🌿 Anxiety & Regret Tools</h2>
+            <p style="margin-bottom: 15px;">Special support for when the mind is restless or heavy with regret:</p>
+            <button class="button" onclick="showQuickCalming()">Quick Calming Technique</button>
+            <button class="button secondary" onclick="showSelfCompassion()">Self-Compassion Practice</button>
+            <button class="button gentle" onclick="showMindfulReturn()">Mindful Return to Practice</button>
+        </div>
+
+        <div class="card">
+            <h2>📝 Practice Journal</h2>
+            <button class="button" onclick="logPractice()">Log Today's Practice</button>
+            <div id="practiceLog" class="practice-log">
+                <div class="log-entry">Welcome to your practice journey. Each moment of mindfulness matters.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup for detailed messages -->
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="encouragement-popup" id="popup">
+        <div id="popupContent"></div>
+        <button class="button" onclick="closePopup()" style="margin-top: 20px;">🙏 Thank you</button>
+    </div>
+
+    <script>
+        const encouragementMessages = [
+            "Your practice doesn't need to be perfect. Just showing up with intention is enough. The cushion welcomes you exactly as you are today.",
+            "Even one mindful breath is a complete practice. You don't need to meditate for hours to benefit from the dharma's wisdom.",
+            "The fact that you're thinking about practice shows your Buddha nature is already awake. Trust in your innate wisdom.",
+            "Every moment offers a fresh start. Your past practice or lack thereof doesn't define your present moment awareness.",
+            "Like a lotus growing from mud, your struggles can become the fertile ground for deeper compassion and understanding.",
+            "The Buddha taught for 45 years because he knew the path takes time. Be patient with yourself as you would with a dear friend.",
+            "Your anxiety is not an obstacle to practice—it's valuable information about the nature of mind. Welcome it with curiosity.",
+            "Meditation is not about stopping thoughts but changing your relationship with them. Notice, acknowledge, and gently return to your breath."
+        ];
+
+        const anxietyMessages = [
+            "When anxiety arises, remember: this feeling is impermanent. Like clouds passing through the sky, it will naturally dissolve. Breathe with it, don't fight it.",
+            "Your anxious mind is trying to protect you. Thank it for caring, then gently redirect your attention to the present moment. You are safe right now.",
+            "Anxiety often comes from future-thinking. Ground yourself by naming 5 things you can see, 4 you can hear, 3 you can touch, 2 you can smell, 1 you can taste.",
+            "The Buddha experienced doubt and fear too. You're not broken—you're human. Your willingness to practice despite anxiety shows tremendous courage."
+        ];
+
+        const regretMessages = [
+            "Regret shows you have a moral compass and the capacity for growth. This is actually a sign of your awakening heart, not a character flaw.",
+            "The past exists only in memory. This moment is where your power lies. Forgive yourself as you would forgive a child learning to walk.",
+            "Self-forgiveness is not condoning past actions—it's freeing yourself to act more skillfully now. You deserve compassion, especially from yourself.",
+            "Your regrets are teachers, not judges. Listen to their lessons, then release their burden. The dharma calls you forward, not backward."
+        ];
+
+        let timerInterval;
+        let breathingInterval;
+        let timeLeft = 300; // 5 minutes in seconds
+
+        function showEncouragement() {
+            const message = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+            document.getElementById('encouragementMessage').innerHTML = message;
+        }
+
+        function showAnxietySupport() {
+            const message = anxietyMessages[Math.floor(Math.random() * anxietyMessages.length)];
+            showPopup("🌿 For Your Anxious Heart", message);
+        }
+
+        function showRegretHealing() {
+            const message = regretMessages[Math.floor(Math.random() * regretMessages.length)];
+            showPopup("💜 Healing Regret", message);
+        }
+
+        function showQuickCalming() {
+            showPopup("🌸 Quick Calming", "Try the 4-7-8 breath: Inhale for 4 counts, hold for 7, exhale for 8. Repeat 3-4 times. This activates your parasympathetic nervous system and signals safety to your body.");
+        }
+
+        function showSelfCompassion() {
+            showPopup("💝 Self-Compassion", "Place your hand on your heart. Feel its rhythm. Say: 'This is a moment of suffering. Suffering is part of human experience. May I be kind to myself. May I give myself the compassion I need.'");
+        }
+
+        function showMindfulReturn() {
+            showPopup("🧘 Mindful Return", "You don't need to be 'ready' to practice. Come as you are—anxious, regretful, tired, whatever. Sit for just 2 minutes. Notice what's here without trying to change it. This is practice. This is enough.");
+        }
+
+        function showPopup(title, content) {
+            document.getElementById('popupContent').innerHTML = `<h2>${title}</h2><p style="margin-top: 15px; line-height: 1.6;">${content}</p>`;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        function startTimer() {
+            const minutes = parseInt(document.getElementById('minutes').value);
+            timeLeft = minutes * 60;
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(function() {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showPopup("🔔 Practice Complete", "Well done! You've completed your meditation session. Notice how you feel right now. Carry this awareness with you into your day.");
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            const minutes = parseInt(document.getElementById('minutes').value);
+            timeLeft = minutes * 60;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function startBreathing() {
+            const circle = document.getElementById('breathCircle');
+            const text = document.getElementById('breathText');
+            let isInhaling = true;
+            
+            breathingInterval = setInterval(function() {
+                if (isInhaling) {
+                    circle.className = 'breath-circle inhale';
+                    text.textContent = 'Breathe in... (4 counts)';
+                } else {
+                    circle.className = 'breath-circle exhale';
+                    text.textContent = 'Breathe out... (4 counts)';
+                }
+                isInhaling = !isInhaling;
+            }, 4000);
+        }
+
+        function stopBreathing() {
+            clearInterval(breathingInterval);
+            document.getElementById('breathCircle').className = 'breath-circle';
+            document.getElementById('breathText').textContent = 'Breathing practice stopped. Notice the stillness.';
+        }
+
+        function logPractice() {
+            const now = new Date();
+            const timeString = now.toLocaleString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `${timeString} - Practice session completed. You showed up today! 🙏`;
+            
+            const log = document.getElementById('practiceLog');
+            log.insertBefore(entry, log.firstChild);
+        }
+
+        // Initialize with a welcoming message
+        window.onload = function() {
+            showEncouragement();
+        };
+    </script>
+</body>
+</html>
